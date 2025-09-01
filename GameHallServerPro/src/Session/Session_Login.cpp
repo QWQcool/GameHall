@@ -32,12 +32,18 @@ public:
 		else 
 		{
 			// 创建新用户
-			user = new User();
-			user->Init(userInfo);
-			user->SetSession(session);
-			session->SetUser(user);
+			if (bStatus)
+			{
+				user = new User();
+				user->Init(userInfo);
+				user->SetSession(session);
+				session->SetUser(user);
+				GameServer::Ins()->AddUser(user);
+			}
+			
 			session->SC_Login(bStatus);
-			GameServer::Ins()->AddUser(user);
+
+
 		}
 	}
 
@@ -63,18 +69,19 @@ public:
 
 		if (pSqlite->BeginPrecompiled(sql, &pError)) {
 			pSqlite->PrecompiledBind(1, username.c_str(), username.length());
-			if (X::DB::Sqlite3Enum::SQLITE_ROW == pSqlite->StepPrecompiled()) {
+			if (X::DB::Sqlite3Enum::SQLITE_ROW == pSqlite->StepPrecompiled()) 
+			{
 				pSqlite->PrecompiledGetValue(0, loginGameCell->userInfo.uid);
 				pSqlite->PrecompiledGetValue(1, loginGameCell->userInfo.username);
 				pSqlite->PrecompiledGetValue(2, loginGameCell->userInfo.password);
 				pSqlite->PrecompiledGetValue(3, loginGameCell->userInfo.nickname);
-				if (loginGameCell->userInfo.password == password)
+ 				if (loginGameCell->userInfo.password == password)
 					loginGameCell->bStatus = true;
 			}
 			pSqlite->EndPrecompiled();
+			GameServer::Ins()->Post(loginGameCell);
 		}
 
-		GameServer::Ins()->Post(loginGameCell);
 	}
 
 	virtual void Release() override
@@ -116,7 +123,7 @@ void Session::SC_Login(bool status)
 	const UserInfo& info = _user->GetUserInfo();
 	cJSON* root = cJSON_CreateObject();
 	cJSON_AddStringToObject(root, "cmd", "SC_Login");
-	cJSON_AddItemToObject(root, "status", cJSON_CreateBool(status));
+	
 	if (status) 
 	{
 		cJSON_AddStringToObject(root, "msg", "Login Success");
@@ -127,6 +134,11 @@ void Session::SC_Login(bool status)
 		cJSON_AddNumberToObject(player, "playerId", info.uid);
 
 		cJSON_AddItemToObject(root, "player", player);
+	}
+	else
+	{
+		cJSON_AddItemToObject(root, "status", cJSON_CreateBool(status));
+		cJSON_AddStringToObject(root, "msg", "Login Failed");
 	}
 	SendJSON(root);
 	cJSON_Delete(root);

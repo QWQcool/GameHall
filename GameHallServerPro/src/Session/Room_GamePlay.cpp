@@ -56,6 +56,7 @@ void Room::CS_GamePlay(cJSON* root)
 	cell->userId = userId;
 	cell->roomId = roomId;
 
+	GameServer::Ins()->Post(cell);
 }
 
 void Room::SC_GamePlay(int userId, int roomId)

@@ -100,7 +100,7 @@ int GameClient::OnNetMsg(const char* buf, int len)
 	{
 		SC_UpdateReadyPosEvent(root);
 	}
-	else if (strcmp("SC_PlayGame", cmd->valuestring) == 0 && _clientRoom != nullptr)
+	else if (strcmp("SC_GamePlay", cmd->valuestring) == 0 && _clientRoom != nullptr)
 	{
 		SC_GoBangPlayEvent(root);
 	}
@@ -446,6 +446,17 @@ void GameClient::SC_SurePreemptLoginEvent(cJSON* root)
 	cJSON* isInRoom = cJSON_GetObjectItem(root, "isInRoom");
 	cJSON* isInGame = cJSON_GetObjectItem(root, "isInGame");
 
+
+	if (userId == nullptr || nickname == nullptr || isInRoom == nullptr || isInGame == nullptr)
+	{
+		std::cout<<"userId or nickname or isInRoom or isInGame is nullptr"<<std::endl;
+		return;
+	}
+	if (userId->type != cJSON_Number || nickname->type != cJSON_String || isInRoom->type != cJSON_Number || isInGame->type != cJSON_Number)
+	{
+		std::cout<<"userId or nickname or isInRoom or isInGame type is not correct"<<std::endl;
+		return;
+	}
 	//_token = token->valuestring;
 	
 	int clientUserId = userId->valueint;
@@ -453,7 +464,11 @@ void GameClient::SC_SurePreemptLoginEvent(cJSON* root)
 	int clientIsInRoom = isInRoom->valueint;
 	int clientIsInGame = isInGame->valueint;
 
-	Player* clientPlayer = new Player(clientUserId, clientNickname);
+	Player* clientPlayer = new Player(clientUserId, clientNickname);		// 指针要判空
+	if (clientPlayer == nullptr)
+	{
+		return;
+	}
 	_clientPlayer = clientPlayer;
 
 	_widgetType = Game_Hall;

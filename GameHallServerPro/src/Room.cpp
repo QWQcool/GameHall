@@ -17,7 +17,7 @@ Room::Room(int playerMaxNum, const std::string& roomName, const std::string& roo
 	_funcs["CS_MovePos"] = std::bind(&Room::CS_MovePos, this, std::placeholders::_1);
 	_funcs["CS_ReadyPos"] = std::bind(&Room::CS_ReadyPos, this, std::placeholders::_1);
 	_funcs["CS_GamePlay"] = std::bind(&Room::CS_GamePlay, this, std::placeholders::_1);
-	_funcs["CS_GoBangDown"] = std::bind(&Room::CS_GoBangDown, this, std::placeholders::_1);
+	_funcs["CS_GoBangDown"] = std::bind(&Room::CS_GoBangDown, this, std::placeholders::_1); //CS_GoBangDown
 	_funcs["CS_AgainGame"] = std::bind(&Room::CS_AgainGame, this, std::placeholders::_1);
 }
 

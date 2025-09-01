@@ -15,6 +15,7 @@ User::User() : _userInfo()
     _funcs["CS_RefreshRoomList"] = std::bind(&User::CS_RefreshRoomList, this, std::placeholders::_1);
     _funcs["CS_JoinRoom"] = std::bind(&User::CS_JoinRoom, this, std::placeholders::_1);
     _funcs["CS_ExitRoom"] = std::bind(&User::CS_ExitRoom, this, std::placeholders::_1);
+    _funcs["CS_ReturnRoom"] = std::bind(&User::CS_ReturnRoom, this, std::placeholders::_1);
 }
 
 void User::OnNetMsg(cJSON* root)

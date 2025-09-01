@@ -62,6 +62,14 @@ void Room::CS_GoBangDown(cJSON* root)
 	int playerIndex = cJSON_GetObjectItem(root, "playerIndex")->valueint;
 
 	GoBangDown_GameCell* cell = new GoBangDown_GameCell();
+	cell->netId = GetNetId(userId);
+	cell->userId = userId;
+	cell->roomId = roomId;
+	cell->xPos = xPos;
+	cell->yPos = yPos;
+	cell->playerIndex = playerIndex;
+
+	GameServer::Ins()->Post(cell);
 }
 
 void Room::SC_GoBangDown(int userId, int roomId, int xPos, int yPos, int playerIndex)
